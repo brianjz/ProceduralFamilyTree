@@ -37,7 +37,6 @@ namespace ProceduralFamilyTree
             LastName = lastName;
             BirthDate = birthDate;
             Gender = gender;
-            //PersonNumber = GetPersonNumber();
             if (DateTime.Now.Subtract(BirthDate).TotalDays / 365 > Utilities.MaxAge)
             {
                 DeathDate = new Utilities.RandomDateTime(BirthDate.AddYears(Utilities.RandomNumber(Utilities.MaxAge, 0)).Year).Next();
@@ -56,7 +55,6 @@ namespace ProceduralFamilyTree
             FirstName = Names.RandomFirstName(Gender, family);
             LastName = lastName;
             BirthDate = birthDate;
-            //PersonNumber = GetPersonNumber();
             if (DateTime.Now.Subtract(BirthDate).TotalDays / 365 > Utilities.MaxAge)
             {
                 DeathDate = new Utilities.RandomDateTime(BirthDate.AddYears(Utilities.RandomNumber(Utilities.MaxAge, 0)).Year).Next();
@@ -89,7 +87,6 @@ namespace ProceduralFamilyTree
             FirstName = Names.RandomFirstName(Gender, Family);
             LastName = Names.RandomSurname();
             BirthDate = birthDate;
-            //PersonNumber = GetPersonNumber();
             int minAge = 0;
             if (spouse != null)
             {
@@ -116,13 +113,10 @@ namespace ProceduralFamilyTree
 
         public bool IsAlive()
         {
-            return DeathDate == DateTime.MinValue ? true : false;
+            return DeathDate == DateTime.MinValue;
         }
 
-        public bool HasOwnFamily()
-        {
-            return Family.Wife == this || Family.Husband == this;
-        }
+        public bool HasOwnFamily() => Family.Wife == this || Family.Husband == this;
 
         public static char ChooseGender()
         {
@@ -141,7 +135,7 @@ namespace ProceduralFamilyTree
 
         public int Age(int year = 0)
         {
-            double ageInDays = 0;
+            double ageInDays;
             if (year > 0)
             {
                 ageInDays = new DateTime(year, 1, 1).Subtract(BirthDate).TotalDays / 365;

@@ -25,15 +25,15 @@ namespace ProceduralFamilyTree
         /// <summary>
         /// Constructor used if you want to set all spouses with marriage date.
         /// </summary>
-        /// <param name="husband"></param>
-        /// <param name="wife"></param>
+        /// <param name="spouse1"></param>
+        /// <param name="spouse2"></param>
         /// <param name="marriageDate"></param>
-        private Family(Person husband, Person wife, DateTime marriageDate)
+        private Family(Person spouse1, Person spouse2, DateTime marriageDate)
         {
-            if (marriageDate.Year - husband.BirthDate.Year >= Utilities.MinMarriageAge && marriageDate.Year - wife.BirthDate.Year >= Utilities.MinMarriageAge)
+            if (marriageDate.Year - spouse1.BirthDate.Year >= Utilities.MinMarriageAge && marriageDate.Year - spouse2.BirthDate.Year >= Utilities.MinMarriageAge)
             {
-                Husband = husband;
-                Wife = wife;
+                Husband = spouse1;
+                Wife = spouse2;
                 Children = new List<Person>();
                 MarriageDate = marriageDate;
                 Husband.Family = this;
@@ -41,7 +41,7 @@ namespace ProceduralFamilyTree
             }
             else
             {
-                throw new System.ArgumentException("One spouse not of marriage age", nameof(husband));
+                throw new System.ArgumentException("One spouse not of marriage age", nameof(spouse1));
             }
         }
 

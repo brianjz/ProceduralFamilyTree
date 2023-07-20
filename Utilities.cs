@@ -30,8 +30,8 @@ namespace ProceduralFamilyTree
 
         public static int WeightedRandomNumber(double mean, double stdDev, int maxValue = 0, int minValue = 0)
         {
-            double u1 = 1.0 - _rnd.NextDouble();  // Uniform random value from 0 to 1
-            double u2 = 1.0 - _rnd.NextDouble();  // Uniform random value from 0 to 1
+            double u1 = 1.0 - _rnd.NextDouble();
+            double u2 = 1.0 - _rnd.NextDouble();
 
             // Transform uniform random values to create a standard normal distribution
             double z = Math.Sqrt(-2.0 * Math.Log(u1)) * Math.Cos(2.0 * Math.PI * u2);
@@ -74,19 +74,5 @@ namespace ProceduralFamilyTree
                 return start.AddDays(_rnd.Next(range)).AddHours(_rnd.Next(0, 24)).AddMinutes(_rnd.Next(0, 60)).AddSeconds(_rnd.Next(0, 60));
             }
         }
-
-        public class DateOnlyConverter : JsonConverter<DateTime>
-        {
-            public override DateTime Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
-            {
-                return DateTime.Parse(reader.GetString());
-            }
-
-            public override void Write(Utf8JsonWriter writer, DateTime value, JsonSerializerOptions options)
-            {
-                writer.WriteStringValue(value.ToString("yyyy-MM-dd"));
-            }
-        }
-
     }
 }

@@ -101,7 +101,7 @@ namespace ProceduralFamilyTree
                 {
                     index = Utilities.RandomNumber(items.Count);
                     randomName = items[index];
-                } while (family.ChildrensNames().Contains(randomName));
+                } while (family.ChildrensNames().Contains(randomName) && randomName != "Unnamed");
             }
             return randomName;
         }
