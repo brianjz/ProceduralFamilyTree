@@ -173,7 +173,7 @@ namespace ProceduralFamilyTree
             foreach (Person child in children)
             {
                 num++; // Increment count for each immediate child
-                if (child.HasOwnFamily())
+                if (child.HasOwnFamily)
                 {
                     num += NumberOfDescendants(child); // Recursively count descendants of each child
                 }
@@ -274,7 +274,7 @@ namespace ProceduralFamilyTree
                 person.PersonNumber = parentNumber;
             }
 
-            if (person.Family != null && person.HasOwnFamily())
+            if (person.Family != null && person.HasOwnFamily)
             {
                 for (int i = 0; i < person.Family.Children.Count; i++)
                 {
@@ -282,5 +282,23 @@ namespace ProceduralFamilyTree
                 }
             }
         }
+
+        // Iterator method to loop through generations
+        public IEnumerable<Person> GetNestedChildren(Person person)
+        {
+            yield return person;
+
+            if (person.HasOwnFamily && person.Family.Children != null)
+            {
+                foreach (Person child in person.Family.Children)
+                {
+                    foreach (var grandchild in GetNestedChildren(child))
+                    {
+                        yield return grandchild;
+                    }
+                }
+            }
+        }
+
     }
 }

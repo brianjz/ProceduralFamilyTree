@@ -19,18 +19,21 @@ namespace ProceduralFamilyTree
         {
             if (!maleNamesLoaded)
             {
-                string fileName = "Names\\MaleNames.txt";
-                string filePath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, fileName);
+                //string fileName = "Names\\MaleNames.txt";
+                //string filePath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, fileName);
 
-                if (File.Exists(filePath))
-                {
-                    maleNamesLoaded = true;
-                    MaleNames = File.ReadAllLines(filePath).ToList();
-                }
-                else
-                {
-                    MaleNames = new List<string> { "Unnamed" };
-                }
+                maleNamesLoaded = true;
+                MaleNames = Properties.Resources.MaleNames.Split("\r\n").ToList();
+
+                //if (File.Exists(filePath))
+                //{
+                //    maleNamesLoaded = true;
+                //    MaleNames = File.ReadAllLines(filePath).ToList();
+                //}
+                //else
+                //{
+                //    MaleNames = new List<string> { "Unnamed" };
+                //}
             }
             return MaleNames;
         }
@@ -38,18 +41,21 @@ namespace ProceduralFamilyTree
         {
             if (!femaleNamesLoaded)
             {
-                string fileName = "Names\\FemaleNames.txt";
-                string filePath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, fileName);
+                femaleNamesLoaded = true;
+                FemaleNames = Properties.Resources.FemaleNames.Split("\r\n").ToList();
 
-                if (File.Exists(filePath))
-                {
-                    femaleNamesLoaded = true;
-                    FemaleNames = File.ReadAllLines(filePath).ToList();
-                }
-                else
-                {
-                    FemaleNames = new List<string> { "Unnamed" };
-                }
+                //string fileName = "Names\\FemaleNames.txt";
+                //string filePath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, fileName);
+
+                //if (File.Exists(filePath))
+                //{
+                //    femaleNamesLoaded = true;
+                //    FemaleNames = File.ReadAllLines(filePath).ToList();
+                //}
+                //else
+                //{
+                //    FemaleNames = new List<string> { "Unnamed" };
+                //}
             }
             return FemaleNames;
         }
@@ -57,18 +63,21 @@ namespace ProceduralFamilyTree
         {
             if (!suramesLoaded)
             {
-                string fileName = "Names\\Surnames.txt";
-                string filePath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, fileName);
+                suramesLoaded = true;
+                Surnames = Properties.Resources.Surnames.Split("\r\n").ToList();
 
-                if (File.Exists(filePath))
-                {
-                    suramesLoaded = true;
-                    Surnames = File.ReadAllLines(filePath).ToList();
-                }
-                else
-                {
-                    Surnames = new List<string> { "Unnamed" };
-                }
+                //string fileName = "Names\\Surnames.txt";
+                //string filePath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, fileName);
+
+                //if (File.Exists(filePath))
+                //{
+                //    suramesLoaded = true;
+                //    Surnames = File.ReadAllLines(filePath).ToList();
+                //}
+                //else
+                //{
+                //    Surnames = new List<string> { "Unnamed" };
+                //}
             }
             return Surnames;
         }

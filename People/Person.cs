@@ -23,6 +23,8 @@ namespace ProceduralFamilyTree
         public char Gender { get => gender; set => gender = value; }
         public Family? Family { get => family; set => family = value; }
         public string PersonNumber { get => personNumber; set => personNumber = value; }
+        public bool HasOwnFamily => Family.Wife == this || Family.Husband == this;
+
 
         /// <summary>
         /// Constructor to use to initiate all major attributes of a Person
@@ -115,8 +117,6 @@ namespace ProceduralFamilyTree
         {
             return DeathDate == DateTime.MinValue;
         }
-
-        public bool HasOwnFamily() => Family.Wife == this || Family.Husband == this;
 
         public static char ChooseGender()
         {
