@@ -16,11 +16,14 @@ namespace ProceduralFamilyTree
         private Person wife;
         private DateTime marriageDate = DateTime.MinValue;
         private List<Person> children;
+        private static int familyIDCounter = 0;
+        private int familyID = 0;
 
         public Person Husband { get => husband; set => husband = value; }
         public Person Wife { get => wife; set => wife = value; }
         public DateTime MarriageDate { get => marriageDate; set => marriageDate = value; }
         public List<Person> Children { get => children; set => children = value; }
+        public int FamilyID { get => familyID; set => familyID = value; }
 
         /// <summary>
         /// Constructor used if you want to set all spouses with marriage date.
@@ -38,6 +41,7 @@ namespace ProceduralFamilyTree
                 MarriageDate = marriageDate;
                 Husband.Family = this;
                 Wife.Family = this;
+                FamilyID = GetNextFamilyID();
             }
             else
             {
@@ -125,7 +129,7 @@ namespace ProceduralFamilyTree
 
         public void AddChild(Person child)
         {
-            child.Family = this;
+            child.BirthFamily = this;
             Children.Add(child);
         }
 
@@ -298,6 +302,11 @@ namespace ProceduralFamilyTree
                     }
                 }
             }
+        }
+
+        public static int GetNextFamilyID()
+        {
+            return ++familyIDCounter;
         }
 
     }

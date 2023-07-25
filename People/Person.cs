@@ -13,7 +13,8 @@ namespace ProceduralFamilyTree
         private DateTime birthDate = DateTime.MinValue;
         private DateTime deathDate = DateTime.MinValue;
         private char gender;
-        private Family? family = null;
+        private Family? birthFamily = null;
+        private Family? marriedFamily = null; 
         private string personNumber = string.Empty;
 
         public string FirstName { get => firstName; set => firstName = value; }
@@ -21,9 +22,10 @@ namespace ProceduralFamilyTree
         public DateTime BirthDate { get => birthDate; set => birthDate = value; }
         public DateTime DeathDate { get => deathDate; set => deathDate = value; }
         public char Gender { get => gender; set => gender = value; }
-        public Family? Family { get => family; set => family = value; }
+        public Family? Family { get => marriedFamily; set => marriedFamily = value; }
+        public Family? BirthFamily { get => birthFamily; set => birthFamily = value; }
         public string PersonNumber { get => personNumber; set => personNumber = value; }
-        public bool HasOwnFamily => Family.Wife == this || Family.Husband == this;
+        public bool HasOwnFamily => Family != null;
 
 
         /// <summary>
@@ -53,7 +55,7 @@ namespace ProceduralFamilyTree
         public Person(string lastName, DateTime birthDate, Family family)
         {
             Gender = ChooseGender();
-            Family = family;
+            BirthFamily = family;
             FirstName = Names.RandomFirstName(Gender, family);
             LastName = lastName;
             BirthDate = birthDate;
