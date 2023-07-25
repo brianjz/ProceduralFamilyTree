@@ -146,7 +146,7 @@ namespace ProceduralFamilyTree
             birthYear += Utilities.RandomNumber(Utilities.YearsBetweenChildren, 2);
             if (birthYear < DateTime.Now.Year)
             {
-                if (birthYear - Wife.BirthDate.Year <= 40 && ((birthYear < Wife.DeathDate.Year && birthYear < Husband.DeathDate.Year) || (Wife.IsAlive() && Husband.IsAlive())))
+                if (birthYear - Wife.BirthDate.Year <= 40 && Wife.WasAlive(birthYear) && Husband.WasAlive(birthYear))
                 {
                     var birthDate = new Utilities.RandomDateTime(birthYear).Next();
                     AddChild(new Person(Husband.LastName, birthDate, this));

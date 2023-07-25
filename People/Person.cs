@@ -156,6 +156,22 @@ namespace ProceduralFamilyTree
             return Convert.ToInt16(Math.Floor(ageInDays));
         }
 
+        public bool WasAlive(int year)
+        {
+            if(DeathDate != DateTime.MinValue)
+            {
+                if(year < DeathDate.Year)
+                {
+                    return true;
+                }
+                else
+                {
+                    return false;
+                }
+            }
+            return true;
+        }
+
         public override string ToString()
         {
             var sb = new StringBuilder();
