@@ -287,23 +287,6 @@ namespace ProceduralFamilyTree
             }
         }
 
-        // Iterator method to loop through generations
-        public IEnumerable<Person> GetNestedChildren(Person person)
-        {
-            yield return person;
-
-            if (person.HasOwnFamily && person.Family.Children != null)
-            {
-                foreach (Person child in person.Family.Children)
-                {
-                    foreach (var grandchild in GetNestedChildren(child))
-                    {
-                        yield return grandchild;
-                    }
-                }
-            }
-        }
-
         public static int GetNextFamilyID()
         {
             return ++familyIDCounter;

@@ -172,6 +172,28 @@ namespace ProceduralFamilyTree
             return true;
         }
 
+        // Iterator method to loop through generations using BFS traversal
+        public IEnumerable<Person> GetNestedChildren()
+        {
+            Queue<Person> queue = new();
+            queue.Enqueue(this);
+
+            while (queue.Count > 0)
+            {
+                var current = queue.Dequeue();
+                yield return current;
+
+                if (current.HasOwnFamily && current.Family.Children.Count > 0)
+                {
+                    foreach (var child in current.Family.Children)
+                    {
+                        queue.Enqueue(child);
+                    }
+                }
+            }
+        }
+
+
         public override string ToString()
         {
             var sb = new StringBuilder();
