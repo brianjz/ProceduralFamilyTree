@@ -28,6 +28,18 @@ namespace ProceduralFamilyTree
             }
         }
 
+        public static double RandomDecimalNumber(int max = 0, int min = 0)
+        {
+            if (min != 0)
+            {
+                return _rnd.NextDouble() * (max - min) + min;
+            }
+            else
+            {
+                return _rnd.NextDouble() * max;
+            }
+        }
+
         public static int WeightedRandomNumber(double mean, double stdDev, int maxValue = 0, int minValue = 0)
         {
             double u1 = 1.0 - _rnd.NextDouble();
@@ -73,6 +85,23 @@ namespace ProceduralFamilyTree
             {
                 return start.AddDays(_rnd.Next(range)).AddHours(_rnd.Next(0, 24)).AddMinutes(_rnd.Next(0, 60)).AddSeconds(_rnd.Next(0, 60));
             }
+        }
+
+        public static double DeathPercentages(int age)
+        {
+            // https://www.cdc.gov/nchs/products/databriefs/db395.htm
+            return age switch
+            {
+                < 4 => 0.00023,
+                < 14 => 0.00013,
+                < 24 => 0.00070,
+                < 34 => 0.00129,
+                < 44 => 0.00392,
+                < 54 => 0.00883,
+                < 64 => 0.01765,
+                < 74 => 0.04308,
+                _ => 0.13229,
+            };
         }
     }
 }

@@ -26,7 +26,7 @@ namespace ProceduralFamilyTree
         public Family? BirthFamily { get => birthFamily; set => birthFamily = value; }
         public string PersonNumber { get => personNumber; set => personNumber = value; }
         public bool HasOwnFamily => Family != null;
-
+        public int Age { get => GetAge(); }
 
         /// <summary>
         /// Constructor to use to initiate all major attributes of a Person
@@ -59,10 +59,7 @@ namespace ProceduralFamilyTree
             FirstName = Names.RandomFirstName(Gender, family);
             LastName = lastName;
             BirthDate = birthDate;
-            if (DateTime.Now.Subtract(BirthDate).TotalDays / 365 > Utilities.MaxAge)
-            {
-                DeathDate = new Utilities.RandomDateTime(BirthDate.AddYears(Utilities.RandomNumber(Utilities.MaxAge, 0)).Year).Next();
-            }
+            DeathDate = DetermineDeathDate();
         }
 
         /// <summary>
@@ -94,12 +91,9 @@ namespace ProceduralFamilyTree
             int minAge = 0;
             if (spouse != null)
             {
-                minAge = Utilities.RandomNumber(spouse.Age() + 5, spouse.Age() - 5);
+                minAge = Utilities.RandomNumber(spouse.Age + 5, spouse.Age - 5);
             }
-            if (DateTime.Now.Subtract(BirthDate).TotalDays / 365 > Utilities.MaxAge)
-            {
-                DeathDate = new Utilities.RandomDateTime(BirthDate.AddYears(Utilities.WeightedRandomNumber(0.8, 0.2, Utilities.MaxAge, minAge)).Year).Next();
-            }
+            DeathDate = DetermineDeathDate(minAge);
         }
 
         public Person(Person spouse)
@@ -108,11 +102,27 @@ namespace ProceduralFamilyTree
             FirstName = Names.RandomFirstName(Gender, null);
             LastName = Names.RandomSurname();
             BirthDate = new Utilities.RandomDateTime(spouse.BirthDate.Year, 5).Next();
-            int minAge = Utilities.RandomNumber(spouse.Age() + 5, spouse.Age() - 5);
+            int minAge = Utilities.RandomNumber(spouse.Age + 5, spouse.Age - 5);
+            DeathDate = DetermineDeathDate(minAge);
+        }
+
+        public DateTime DetermineDeathDate(int minAge = 0) {
+            DateTime deathDate = DateTime.MinValue;
             if (DateTime.Now.Subtract(BirthDate).TotalDays / 365 > Utilities.MaxAge)
             {
-                DeathDate = new Utilities.RandomDateTime(BirthDate.AddYears(Utilities.WeightedRandomNumber(0.8, 0.2, Utilities.MaxAge, minAge)).Year).Next();
+                deathDate = new Utilities.RandomDateTime(BirthDate.AddYears(Utilities.WeightedRandomNumber(0.8, 0.2, Utilities.MaxAge, minAge)).Year).Next();
             }
+            else
+            {
+                // TODO: Using 5% change to have a death. Determining better or more realistic option
+                var chance = Utilities.RandomDecimalNumber(100, 0);
+                var dChance = Utilities.DeathPercentages(Age);
+                if(chance <= dChance) {
+                    int yearsFromNow = DateTime.Now.Year - BirthDate.Year - 1;
+                    deathDate = new Utilities.RandomDateTime(BirthDate.AddYears(Utilities.WeightedRandomNumber(0.8, 0.2, yearsFromNow, minAge)).Year).Next();
+                }
+            }
+            return deathDate;
         }
 
         public bool IsAlive()
@@ -135,7 +145,7 @@ namespace ProceduralFamilyTree
             return FirstName + " " + LastName;
         }
 
-        public int Age(int year = 0)
+        public int GetAge(int year = 0)
         {
             double ageInDays;
             if (year > 0)
@@ -212,7 +222,7 @@ namespace ProceduralFamilyTree
                 sb.Append(DeathDate.ToString("d"));
             }
             sb.Append(")");
-            sb.Append(" - " + ageText + ": " + Age() + " years");
+            sb.Append(" - " + ageText + ": " + Age + " years");
             return sb.ToString();
         }
     }

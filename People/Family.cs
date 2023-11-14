@@ -69,17 +69,17 @@ namespace ProceduralFamilyTree
         public static Family? CreateFamily(Person spouse1, Person spouse2, DateTime? marriageDate = null)
         {
 
-            if (spouse1.Gender == spouse2.Gender) // Same genders cannot marry at this point, will implement
+            if (spouse1.Gender == spouse2.Gender) // Same genders cannot marry at this point, plan to implement
             {
-                // return null;
-                throw new NotImplementedException("Spouses are of same gender");
+                return null;
+                // throw new NotImplementedException("Spouses are of same gender");
             }
             // var children = new List<Person>();
             int startingYear = spouse1.BirthDate.Year > spouse2.BirthDate.Year ? spouse1.BirthDate.Year : spouse2.BirthDate.Year;
             int marriageAge = Utilities.MinMarriageAge + Utilities.RandomNumber(6, 1);
-            if (marriageAge > spouse1.Age() || marriageAge > spouse2.Age())
+            if (marriageAge > spouse1.Age || marriageAge > spouse2.Age)
             {
-                marriageAge = spouse1.Age() > spouse2.Age() ? spouse2.Age() : spouse1.Age();
+                marriageAge = spouse1.Age > spouse2.Age ? spouse2.Age : spouse1.Age;
             }
             int marriageYear = startingYear + marriageAge;
             if (spouse1.DeathDate.Year <= marriageYear && spouse1.DeathDate != DateTime.MinValue)
@@ -92,7 +92,7 @@ namespace ProceduralFamilyTree
             }
             DateTime finalMarriageDate = (DateTime)(marriageDate != null ? marriageDate : new Utilities.RandomDateTime(marriageYear).Next());
 
-            if (spouse1.Age(finalMarriageDate.Year) >= Utilities.MinMarriageAge && spouse2.Age(finalMarriageDate.Year) >= Utilities.MinMarriageAge)
+            if (spouse1.GetAge(finalMarriageDate.Year) >= Utilities.MinMarriageAge && spouse2.GetAge(finalMarriageDate.Year) >= Utilities.MinMarriageAge)
             {
                 if (spouse1.Gender == 'm')
                 {
@@ -115,7 +115,7 @@ namespace ProceduralFamilyTree
                 {
                     foreach (Person child in Children)
                     {
-                        if (child.Age() > Utilities.MinMarriageAge && child.Age(DateTime.Now.Year) > Utilities.MinMarriageAge)
+                        if (child.Age > Utilities.MinMarriageAge && child.GetAge(DateTime.Now.Year) > Utilities.MinMarriageAge)
                         {
                             Person spouse = new(child);
                             child.Family = CreateFamily(child, spouse);
@@ -147,7 +147,8 @@ namespace ProceduralFamilyTree
             {
                 birthYear = Children.Last().BirthDate.Year;
             }
-            birthYear += Utilities.RandomNumber(Utilities.YearsBetweenChildren, 2);
+            int minYears = Children.Count == 0 ? 1 : 2;
+            birthYear += Utilities.RandomNumber(Utilities.YearsBetweenChildren, minYears);
             if (birthYear < DateTime.Now.Year)
             {
                 if (birthYear - Wife.BirthDate.Year <= 40 && Wife.WasAlive(birthYear) && Husband.WasAlive(birthYear))
@@ -170,7 +171,7 @@ namespace ProceduralFamilyTree
 
         public int NumberOfMarriableChildren()
         {
-            return Children.Count(child => child.Age() >= Utilities.MinMarriageAge);
+            return Children.Count(child => child.Age >= Utilities.MinMarriageAge);
         }
 
         public int NumberOfDescendants(Person? descendant = null)
