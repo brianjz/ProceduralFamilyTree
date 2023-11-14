@@ -37,7 +37,7 @@ namespace ProceduralFamilyTree
             double z = Math.Sqrt(-2.0 * Math.Log(u1)) * Math.Cos(2.0 * Math.PI * u2);
 
             // Scale and shift the distribution to the desired mean and standard deviation
-            double randomValue = (mean + (stdDev * z)) * 100;
+            double randomValue = (mean + (stdDev * z)) * maxValue;
 
             // Clamp the random value within the desired range (if needed)
             randomValue = Math.Max(minValue, Math.Min(maxValue, randomValue));

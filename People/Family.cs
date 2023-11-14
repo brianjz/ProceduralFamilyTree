@@ -113,7 +113,7 @@ namespace ProceduralFamilyTree
                     {
                         if (child.Age() > Utilities.MinMarriageAge && child.Age(DateTime.Now.Year) > Utilities.MinMarriageAge)
                         {
-                            Person spouse = new Person(child);
+                            Person spouse = new(child);
                             child.Family = CreateFamily(child, spouse);
                             if (child.Family != null)
                             {
@@ -157,7 +157,7 @@ namespace ProceduralFamilyTree
         public void CreateChildren(int maxNumChildren = 0)
         {
             maxNumChildren = maxNumChildren == 0 ? Utilities.MaxNumberOfKids : maxNumChildren;
-            for (var i = 0; i < Utilities.WeightedRandomNumber(0.8, 0.2, maxNumChildren, 0); i++)
+            for (var i = 0; i < Utilities.WeightedRandomNumber(0.6, 0.2, maxNumChildren, 0); i++)
             {
                 CreateChild();
             }
