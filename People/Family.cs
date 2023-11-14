@@ -12,10 +12,10 @@ namespace ProceduralFamilyTree
 {
     public class Family
     {
-        private Person husband;
-        private Person wife;
+        private Person husband = null!;
+        private Person wife = null!;
         private DateTime marriageDate = DateTime.MinValue;
-        private List<Person> children;
+        private List<Person> children = new();
         private static int familyIDCounter = 0;
         private int familyID = 0;
 
@@ -24,6 +24,7 @@ namespace ProceduralFamilyTree
         public DateTime MarriageDate { get => marriageDate; set => marriageDate = value; }
         public List<Person> Children { get => children; set => children = value; }
         public int FamilyID { get => familyID; set => familyID = value; }
+        public int NumDescendants { get => NumberOfDescendants(Husband); }
 
         /// <summary>
         /// Constructor used if you want to set all spouses with marriage date.
@@ -45,32 +46,35 @@ namespace ProceduralFamilyTree
             }
             else
             {
-                throw new System.ArgumentException("One spouse not of marriage age", nameof(spouse1));
+                throw new ArgumentException("One spouse not of marriage age", nameof(spouse1));
             }
         }
 
-        public static Family CreateNewRandomFamily(int year = 0)
+        public static Family? CreateNewRandomFamily(int year = 0)
         {
             year = year == 0 ? Utilities.RandomNumber(1950, 1850) : year - Utilities.MinMarriageAge - 3;
             Person husband = new(new Utilities.RandomDateTime(year).Next(), 'm');
             Person wife = new(new Utilities.RandomDateTime(husband.BirthDate.Year, 5).Next(), 'f', husband);
 
-            Family family = Family.CreateFamily(husband, wife);
-            family.Husband.PersonNumber = "1";
-            family.CreateChildren();
-            family.AssignPersonNumbers(family.Husband);
+            Family? family = CreateFamily(husband, wife);
+            if(family != null) {
+                family.Husband.PersonNumber = "1";
+                family.CreateChildren();
+                family.AssignPersonNumbers(family.Husband);
+            }
 
             return family;
         }
 
-        public static Family? CreateFamily(Person spouse1, Person? spouse2, DateTime? marriageDate = null)
+        public static Family? CreateFamily(Person spouse1, Person spouse2, DateTime? marriageDate = null)
         {
 
-            if (spouse2 != null && spouse1.Gender == spouse2.Gender) // Same genders cannot marry at this point, will implement
+            if (spouse1.Gender == spouse2.Gender) // Same genders cannot marry at this point, will implement
             {
-                return null;
+                // return null;
+                throw new NotImplementedException("Spouses are of same gender");
             }
-            var children = new List<Person>();
+            // var children = new List<Person>();
             int startingYear = spouse1.BirthDate.Year > spouse2.BirthDate.Year ? spouse1.BirthDate.Year : spouse2.BirthDate.Year;
             int marriageAge = Utilities.MinMarriageAge + Utilities.RandomNumber(6, 1);
             if (marriageAge > spouse1.Age() || marriageAge > spouse2.Age())
@@ -87,8 +91,7 @@ namespace ProceduralFamilyTree
                 marriageYear = spouse2.DeathDate.Year - 1;
             }
             DateTime finalMarriageDate = (DateTime)(marriageDate != null ? marriageDate : new Utilities.RandomDateTime(marriageYear).Next());
-            //Husband.Family = this;
-            //Wife.Family = this;
+
             if (spouse1.Age(finalMarriageDate.Year) >= Utilities.MinMarriageAge && spouse2.Age(finalMarriageDate.Year) >= Utilities.MinMarriageAge)
             {
                 if (spouse1.Gender == 'm')
@@ -99,8 +102,9 @@ namespace ProceduralFamilyTree
                 {
                     return new Family(spouse2, spouse1, finalMarriageDate);
                 }
+            } else {
+                return null;
             }
-            return null;
         }
 
         public void CreateGenerations(int generations = 0)
@@ -173,7 +177,7 @@ namespace ProceduralFamilyTree
         {
             int num = 0;
 
-            var children = descendant == null ? Children : descendant.Family.Children;
+            List<Person> children = descendant == null ? Children : descendant.Family.Children;
             foreach (Person child in children)
             {
                 num++; // Increment count for each immediate child
@@ -194,9 +198,9 @@ namespace ProceduralFamilyTree
         /// <returns></returns>
         public string ListFamily(string format = "sentence", int tabAmount = 0)
         {
-            var family = String.Empty;
+            var family = string.Empty;
             format = format.ToLower();
-            string tabs = String.Empty;
+            string tabs = string.Empty;
             for (int x = 0; x < tabAmount; x++)
             {
                 tabs += "  ";
@@ -234,22 +238,22 @@ namespace ProceduralFamilyTree
         /// <returns></returns>
         public string ListChildren(string format = "sentence", int tabAmount = 0)
         {
-            string tabs = String.Empty;
+            string tabs = string.Empty;
             for (int x = 0; x < tabAmount; x++)
             {
                 tabs += "  ";
             }
-            string kids = String.Empty;
+            string kids = string.Empty;
             format = format.ToLower();
             if (format == "sentence")
             {
-                kids = String.Join(", ", Children);
+                kids = string.Join(", ", Children);
                 var lastComma = kids.LastIndexOf(',');
                 if (lastComma != -1) kids = kids.Insert(lastComma + 1, " and");
             }
             else if (format == "list")
             {
-                kids = tabs + String.Join("\r\n" + tabs, Children);
+                kids = tabs + string.Join("\r\n" + tabs, Children);
             }
 
             return kids;
