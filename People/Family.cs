@@ -1,4 +1,5 @@
-﻿using System;
+﻿using System.Runtime.InteropServices;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics.Metrics;
 using System.Linq;
@@ -16,14 +17,12 @@ namespace ProceduralFamilyTree
         private Person wife = null!;
         private DateTime marriageDate = DateTime.MinValue;
         private List<Person> children = new();
-        private static int familyIDCounter = 0;
-        private int familyID = 0;
 
         public Person Husband { get => husband; set => husband = value; }
         public Person Wife { get => wife; set => wife = value; }
         public DateTime MarriageDate { get => marriageDate; set => marriageDate = value; }
         public List<Person> Children { get => children; set => children = value; }
-        public int FamilyID { get => familyID; set => familyID = value; }
+        public string FamilyID { get => Guid.NewGuid().ToString(); }
         public int NumDescendants { get => NumberOfDescendants(Husband); }
 
         /// <summary>
@@ -42,7 +41,6 @@ namespace ProceduralFamilyTree
                 MarriageDate = marriageDate;
                 Husband.Family = this;
                 Wife.Family = this;
-                FamilyID = GetNextFamilyID();
             }
             else
             {
@@ -292,10 +290,22 @@ namespace ProceduralFamilyTree
             }
         }
 
-        public static int GetNextFamilyID()
-        {
-            return ++familyIDCounter;
+        public override string ToString() {
+            var sb = new StringBuilder();
+            sb.Append(Husband.ToString());
+            sb.Append(Wife.ToString());
+            foreach(Person child in Children) {
+                sb.Append(child.ToString());
+            }
+
+            return sb.ToString();
         }
+
+        // public Guid GetNextFamilyID()
+        // {
+        //     // return ++familyIDCounter;
+        //     return Guid.Parse(ToString());
+        // }
 
     }
 }

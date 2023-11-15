@@ -91,7 +91,7 @@ namespace ProceduralFamilyTree
             int minAge = 0;
             if (spouse != null)
             {
-                minAge = Utilities.RandomNumber(spouse.Age + 5, spouse.Age - 5);
+                // minAge = Utilities.RandomNumber(spouse.Age + 5, spouse.Age - 5);
             }
             DeathDate = DetermineDeathDate(minAge);
         }
@@ -114,13 +114,18 @@ namespace ProceduralFamilyTree
             }
             else
             {
-                // TODO: Using 5% change to have a death. Determining better or more realistic option
-                var chance = Utilities.RandomDecimalNumber(100, 0);
-                var dChance = Utilities.DeathPercentages(Age);
-                if(chance <= dChance) {
-                    int yearsFromNow = DateTime.Now.Year - BirthDate.Year - 1;
-                    deathDate = new Utilities.RandomDateTime(BirthDate.AddYears(Utilities.WeightedRandomNumber(0.8, 0.2, yearsFromNow, minAge)).Year).Next();
-                }
+                bool isDead = false;
+                int curAge = minAge;
+                int yearsFromNow = DateTime.Now.Year - BirthDate.Year - 1;
+                do {
+                    var chance = Utilities.RandomDecimalNumber(100, 0);
+                    var dChance = Utilities.MortalityRate(curAge);
+                    if(chance <= dChance || curAge == Utilities.MaxAge) {
+                        deathDate = new Utilities.RandomDateTime(BirthDate.AddYears(curAge).Year).Next();
+                        isDead = true;
+                    }
+                    curAge++;
+                } while (!isDead && curAge < yearsFromNow);
             }
             return deathDate;
         }

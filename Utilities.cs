@@ -5,7 +5,7 @@ namespace ProceduralFamilyTree
 {
     public class Utilities
     {
-        private static readonly Random _rnd = new();
+        private static Random _rnd = new();
         public static int YearsBetweenChildren { get; set; } = 5;
         public static int MaxNumberOfKids { get; set; } = 10;
         public static int MinMarriageAge { get; set; } = 18;
@@ -14,6 +14,10 @@ namespace ProceduralFamilyTree
 
         static Utilities()
         {
+        }
+
+        public static void SetSeed(int seed) {
+            _rnd = new Random(seed);
         }
 
         public static int RandomNumber(int max = 0, int min = 0)
@@ -87,20 +91,20 @@ namespace ProceduralFamilyTree
             }
         }
 
-        public static double DeathPercentages(int age)
+        public static double MortalityRate(int age)
         {
-            // https://www.cdc.gov/nchs/products/databriefs/db395.htm
+            // 2019 rates: https://www.cdc.gov/nchs/products/databriefs/db395.htm
             return age switch
             {
-                < 4 => 0.00023,
-                < 14 => 0.00013,
-                < 24 => 0.00070,
-                < 34 => 0.00129,
-                < 44 => 0.00392,
-                < 54 => 0.00883,
-                < 64 => 0.01765,
-                < 74 => 0.04308,
-                _ => 0.13229,
+                < 4 => 0.023,
+                < 14 => 0.013,
+                < 24 => 0.070,
+                < 34 => 0.129,
+                < 44 => 0.392,
+                < 54 => 0.883,
+                < 64 => 1.765,
+                < 74 => 4.308,
+                _ => 13.229,
             };
         }
     }
