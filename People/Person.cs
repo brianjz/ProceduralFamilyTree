@@ -1,4 +1,5 @@
-﻿using System;
+﻿using System.Runtime.Versioning;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -8,8 +9,10 @@ namespace ProceduralFamilyTree
 {
     public class Person
     {
-        private string firstName = String.Empty;
-        private string lastName = String.Empty;
+        private string firstName = string.Empty;
+        private string middleName = string.Empty;
+        private string lastName = string.Empty;
+        private string suffix = string.Empty;
         private DateTime birthDate = DateTime.MinValue;
         private DateTime deathDate = DateTime.MinValue;
         private char gender;
@@ -18,7 +21,9 @@ namespace ProceduralFamilyTree
         private string personNumber = string.Empty;
 
         public string FirstName { get => firstName; set => firstName = value; }
+        public string MiddleName { get => middleName; set => middleName = value; }
         public string LastName { get => lastName; set => lastName = value; }
+        public string Suffix { get => suffix; set => suffix = value; }
         public DateTime BirthDate { get => birthDate; set => birthDate = value; }
         public DateTime DeathDate { get => deathDate; set => deathDate = value; }
         public char Gender { get => gender; set => gender = value; }
@@ -56,7 +61,12 @@ namespace ProceduralFamilyTree
         {
             Gender = ChooseGender();
             BirthFamily = family;
-            FirstName = Names.RandomFirstName(Gender, family);
+            FirstName = Names.RandomName(Gender, "first", family, birthDate);
+            MiddleName = Names.RandomName(Gender, "middle", family, birthDate);
+            if(MiddleName == FirstName) {
+                MiddleName = Names.RandomName(Gender, "middle", family, birthDate);
+            }
+            Suffix = FirstName == family.Husband.FirstName ? "Jr" : "";
             LastName = lastName;
             BirthDate = birthDate;
             DeathDate = DetermineDeathDate();
@@ -85,7 +95,12 @@ namespace ProceduralFamilyTree
             {
                 throw new ArgumentOutOfRangeException(nameof(gender), "Gender must be M or F or ?, unless spouse is set.");
             }
-            FirstName = Names.RandomFirstName(Gender, Family);
+            FirstName = Names.RandomName(Gender, "first", Family, birthDate);
+            MiddleName = Names.RandomName(Gender, "middle", Family, birthDate);
+            if(MiddleName == FirstName) {
+                MiddleName = Names.RandomName(Gender, "middle", Family, birthDate);
+            }
+            Suffix = FirstName == Family?.Husband.FirstName ? "Jr" : "";
             LastName = Names.RandomSurname();
             BirthDate = birthDate;
             int minAge = 0;
@@ -99,9 +114,14 @@ namespace ProceduralFamilyTree
         public Person(Person spouse)
         {
             Gender = spouse.Gender == 'm' ? 'f' : 'm';
-            FirstName = Names.RandomFirstName(Gender, null);
             LastName = Names.RandomSurname();
             BirthDate = new Utilities.RandomDateTime(spouse.BirthDate.Year, 5).Next();
+            FirstName = Names.RandomName(Gender, "first", null, BirthDate);
+            MiddleName = Names.RandomName(Gender, "middle", null, BirthDate);
+            if(MiddleName == FirstName) {
+                MiddleName = Names.RandomName(Gender, "middle", null, BirthDate);
+            }
+            Suffix = FirstName == Family?.Husband.FirstName ? "Jr" : "";
             int minAge = Utilities.RandomNumber(spouse.Age + 5, spouse.Age - 5);
             DeathDate = DetermineDeathDate(minAge);
         }
@@ -226,7 +246,7 @@ namespace ProceduralFamilyTree
             {
                 sb.Append(DeathDate.ToString("d"));
             }
-            sb.Append(")");
+            sb.Append(')');
             sb.Append(" - " + ageText + ": " + Age + " years");
             return sb.ToString();
         }

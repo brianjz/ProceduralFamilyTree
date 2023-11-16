@@ -19,21 +19,8 @@ namespace ProceduralFamilyTree
         {
             if (!maleNamesLoaded)
             {
-                //string fileName = "Names\\MaleNames.txt";
-                //string filePath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, fileName);
-
                 maleNamesLoaded = true;
                 MaleNames = Properties.Resources.MaleNames.Split("\r\n").ToList();
-
-                //if (File.Exists(filePath))
-                //{
-                //    maleNamesLoaded = true;
-                //    MaleNames = File.ReadAllLines(filePath).ToList();
-                //}
-                //else
-                //{
-                //    MaleNames = new List<string> { "Unnamed" };
-                //}
             }
             return MaleNames;
         }
@@ -43,19 +30,6 @@ namespace ProceduralFamilyTree
             {
                 femaleNamesLoaded = true;
                 FemaleNames = Properties.Resources.FemaleNames.Split("\r\n").ToList();
-
-                //string fileName = "Names\\FemaleNames.txt";
-                //string filePath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, fileName);
-
-                //if (File.Exists(filePath))
-                //{
-                //    femaleNamesLoaded = true;
-                //    FemaleNames = File.ReadAllLines(filePath).ToList();
-                //}
-                //else
-                //{
-                //    FemaleNames = new List<string> { "Unnamed" };
-                //}
             }
             return FemaleNames;
         }
@@ -65,19 +39,6 @@ namespace ProceduralFamilyTree
             {
                 suramesLoaded = true;
                 Surnames = Properties.Resources.Surnames.Split("\r\n").ToList();
-
-                //string fileName = "Names\\Surnames.txt";
-                //string filePath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, fileName);
-
-                //if (File.Exists(filePath))
-                //{
-                //    suramesLoaded = true;
-                //    Surnames = File.ReadAllLines(filePath).ToList();
-                //}
-                //else
-                //{
-                //    Surnames = new List<string> { "Unnamed" };
-                //}
             }
             return Surnames;
         }
@@ -90,27 +51,50 @@ namespace ProceduralFamilyTree
             string randomName = items[index];
             return randomName;
         }
-        public static string RandomFirstName(char gender, Family? family)
+        public static string RandomName(char gender, string type, Family? family, DateTime? birthDate)
         {
             var items = new List<string>();
             if (gender == 'm')
             {
-                items = GetMaleNames();
+                items = GetMaleNames().ToList(); // need ToList, otherwise it is only a reference and possibly gets cleared
+                if (family != null && family.GenderCount(gender) == 0 && type == "first") {
+                    // chance based on a few internet searches on how often first male is named after father
+                    int chanceNamedJunior = birthDate?.Year switch
+                    {
+                        < 1950 => 52,
+                        < 2000 => 28,
+                        _ => 2
+                    };
+                    if (Utilities.RandomNumber(100, 0) <= chanceNamedJunior) {
+                        items.Clear();
+                        items.Add(family.Husband.FirstName);
+                    }
+                }
             }
             else
             {
-                items = GetFemaleNames();
+                items = GetFemaleNames().ToList();
             }
 
             int index = Utilities.RandomNumber(items.Count);
             string randomName = items[index];
-            if (family != null)
+
+                // Chance to have middle name be mother's maiden name
+            if(type == "middle" && family != null) {
+                if (Utilities.RandomNumber(100, 0) <= 10) {
+                    randomName = family.Wife.LastName;
+                }
+            }
+            else 
             {
-                do
+                if (family != null && items.Count > 1)
                 {
-                    index = Utilities.RandomNumber(items.Count);
-                    randomName = items[index];
-                } while (family.ChildrensNames().Contains(randomName) && randomName != "Unnamed");
+                    do
+                    {
+                        index = Utilities.RandomNumber(items.Count);
+                        randomName = items[index];
+                    } while (family.ChildrensNames().Contains(randomName) && randomName != "Unnamed");
+                }
             }
             return randomName;
         }

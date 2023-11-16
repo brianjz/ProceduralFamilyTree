@@ -301,11 +301,17 @@ namespace ProceduralFamilyTree
             return sb.ToString();
         }
 
-        // public Guid GetNextFamilyID()
-        // {
-        //     // return ++familyIDCounter;
-        //     return Guid.Parse(ToString());
-        // }
+        public int GenderCount(char gender) {
+            int c = 0;
+
+            foreach(Person ch in Children) {
+                if(ch.Gender == gender) {
+                    c++;
+                }
+            }
+
+            return c;
+        }
 
     }
 }
