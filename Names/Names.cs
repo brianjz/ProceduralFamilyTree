@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace ProceduralFamilyTree
+﻿namespace ProceduralFamilyTree
 {
     public class Names
     {
@@ -77,26 +71,44 @@ namespace ProceduralFamilyTree
             }
 
             int index = Utilities.RandomNumber(items.Count);
-            string randomName = items[index];
+            string chosenName = items[index];
+            bool finalNameChosen = false;
 
-                // Chance to have middle name be mother's maiden name
+            // Chance to have middle name be mother's maiden name
             if(type == "middle" && family != null) {
                 if (Utilities.RandomNumber(100, 0) <= 10) {
-                    randomName = family.Wife.LastName;
+                    chosenName = family.Wife.LastName;
+                    finalNameChosen = true;
                 }
             }
             else 
             {
                 if (family != null && items.Count > 1)
                 {
-                    do
-                    {
-                        index = Utilities.RandomNumber(items.Count);
-                        randomName = items[index];
-                    } while (family.ChildrensNames().Contains(randomName) && randomName != "Unnamed");
+                    if(Utilities.RandomNumber(100) < 20) {
+                        // Chance to be named after an ancestor
+                        List<Person> ancestorOptions = family.Husband.FindAncestorsByGender(gender);
+                        ancestorOptions.AddRange(family.Wife.FindAncestorsByGender(gender));
+                        for (int i = 0; i < ancestorOptions.Count; i++) { // remove parents from options
+                            Person ra = ancestorOptions[i];
+                            if (ra == family.Husband || ra == family.Wife) {
+                                ancestorOptions.RemoveAt(i);
+                            }
+                        }
+                        var randomAncestor = Utilities.RandomNumber(ancestorOptions.Count);
+                        chosenName = ancestorOptions.Count > 0 ? ancestorOptions[randomAncestor].FirstName : chosenName;
+                        finalNameChosen = true;
+                    }
+                    if(!finalNameChosen) {
+                        do
+                        {
+                            index = Utilities.RandomNumber(items.Count);
+                            chosenName = items[index];
+                        } while (family.ChildrensNames().Contains(chosenName) && chosenName != "Unnamed");
+                    }
                 }
             }
-            return randomName;
+            return chosenName;
         }
 
     }

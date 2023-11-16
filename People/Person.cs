@@ -1,9 +1,4 @@
-﻿using System.Runtime.Versioning;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Text;
 
 namespace ProceduralFamilyTree
 {
@@ -32,6 +27,7 @@ namespace ProceduralFamilyTree
         public string PersonNumber { get => personNumber; set => personNumber = value; }
         public bool HasOwnFamily => Family != null;
         public int Age { get => GetAge(); }
+        private List<Person> MaleAncestors { get => FindAncestorsByGender('m'); }
 
         /// <summary>
         /// Constructor to use to initiate all major attributes of a Person
@@ -227,7 +223,49 @@ namespace ProceduralFamilyTree
                 }
             }
         }
+        public Person? FindRandomAncestor(Person? person, char gender)
+        {
+            person ??= this;
+            Person? lastAncestor = null;
+            if (person.BirthFamily != null)
+            {
+                lastAncestor = person;
+                Person parent = gender == 'm' ? person.BirthFamily.Husband : person.BirthFamily.Wife;
 
+                Person? grandparent = null;
+                if(Utilities.RandomNumber(100) < 75) {
+                    grandparent = FindRandomAncestor(parent, gender);
+                }
+                lastAncestor = grandparent ?? parent;
+            }
+
+            return lastAncestor;
+        }
+
+        public List<Person> FindAncestorsByGender(char gender)
+        {
+            List<Person> ancestorsWithProperty = new();
+
+            if (Gender == gender)
+            {
+                ancestorsWithProperty.Add(this);
+            }
+
+            if (BirthFamily?.Husband != null || BirthFamily?.Wife != null)
+            {
+                if (BirthFamily?.Husband != null)
+                {
+                    ancestorsWithProperty.AddRange(BirthFamily.Husband.FindAncestorsByGender(gender));
+                }
+
+                if (BirthFamily?.Wife != null)
+                {
+                    ancestorsWithProperty.AddRange(BirthFamily.Wife.FindAncestorsByGender(gender));
+                }
+            }
+
+            return ancestorsWithProperty;
+        }
 
         public override string ToString()
         {
