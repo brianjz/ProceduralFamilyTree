@@ -39,10 +39,10 @@ namespace ProceduralFamilyTree
             }
         }
 
-        public static Family? CreateNewRandomFamily(int year = 0)
+        public static Family? CreateNewRandomFamily(int year = 0, string? surname = "")
         {
             year = year == 0 ? Utilities.RandomNumber(1950, 1850) : year - Utilities.MinMarriageAge - 3;
-            Person husband = new(new Utilities.RandomDateTime(year).Next(), 'm');
+            Person husband = new(new Utilities.RandomDateTime(year).Next(), 'm', null, surname);
             Person wife = new(new Utilities.RandomDateTime(husband.BirthDate.Year, 5).Next(), 'f', husband);
 
             Family? family = CreateFamily(husband, wife);

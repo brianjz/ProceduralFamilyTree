@@ -45,23 +45,25 @@
             string randomName = items[index];
             return randomName;
         }
-        public static string RandomName(char gender, string type, Family? family, DateTime? birthDate)
+        // public static string RandomName(char gender, string type, Family? family, DateTime? birthDate)
+        public static string RandomName(Person person, string type, string? ignoredName = null)
         {
+            // TODO: A lot of this logic got messy as it grew. Look into refactoring.
             var items = new List<string>();
-            if (gender == 'm')
+            if (person.Gender == 'm')
             {
                 items = GetMaleNames().ToList(); // need ToList, otherwise it is only a reference and possibly gets cleared
-                if (family != null && family.GenderCount(gender) == 0 && type == "first") {
+                if (person.BirthFamily != null && person.BirthFamily.GenderCount(person.Gender) == 0 && type == "first") {
                     // chance based on a few internet searches on how often first male is named after father
-                    int chanceNamedJunior = birthDate?.Year switch
+                    int chanceNamedJunior = person.BirthDate.Year switch
                     {
                         < 1950 => 52,
                         < 2000 => 28,
                         _ => 2
                     };
-                    if (Utilities.RandomNumber(100, 0) <= chanceNamedJunior) {
+                    if (Utilities.RandomNumber(100, 0) <= chanceNamedJunior && !person.BirthFamily.ChildrensNames().Contains(person.BirthFamily.Husband.FirstName)) {
                         items.Clear();
-                        items.Add(family.Husband.FirstName);
+                        items.Add(person.BirthFamily.Husband.FirstName);
                     }
                 }
             }
@@ -75,39 +77,55 @@
             bool finalNameChosen = false;
 
             // Chance to have middle name be mother's maiden name
-            if(type == "middle" && family != null) {
+            if(type == "middle" && person.BirthFamily != null) {
                 if (Utilities.RandomNumber(100, 0) <= 10) {
-                    chosenName = family.Wife.LastName;
+                    chosenName = person.BirthFamily.Wife.LastName;
                     finalNameChosen = true;
                 }
             }
             else 
             {
-                if (family != null && items.Count > 1)
+                if (person.BirthFamily != null && items.Count > 1)
                 {
                     if(Utilities.RandomNumber(100) < 20) {
                         // Chance to be named after an ancestor
-                        List<Person> ancestorOptions = family.Husband.FindAncestorsByGender(gender);
-                        ancestorOptions.AddRange(family.Wife.FindAncestorsByGender(gender));
-                        for (int i = 0; i < ancestorOptions.Count; i++) { // remove parents from options
-                            Person ra = ancestorOptions[i];
-                            if (ra == family.Husband || ra == family.Wife) {
-                                ancestorOptions.RemoveAt(i);
+                        List<Person> allAncestorOptions = person.BirthFamily.Husband.FindAncestorsByGender(person.Gender);
+                        allAncestorOptions.AddRange(person.BirthFamily.Wife.FindAncestorsByGender(person.Gender));
+                        var ancestorNameOptions = new List<Person>();
+                        for (int i = 0; i < allAncestorOptions.Count; i++) { // remove parents from options
+                            Person ra = allAncestorOptions[i];
+                            if (ra != person.BirthFamily.Husband && ra.FirstName != person.BirthFamily.Husband.FirstName 
+                                && ra != person.BirthFamily.Wife && ra.FirstName != person.BirthFamily.Wife.FirstName) {
+                                ancestorNameOptions.Add(ra);
                             }
                         }
-                        var randomAncestor = Utilities.RandomNumber(ancestorOptions.Count);
-                        chosenName = ancestorOptions.Count > 0 ? ancestorOptions[randomAncestor].FirstName : chosenName;
+                        var randomAncestor = Utilities.RandomNumber(ancestorNameOptions.Count);
+                        chosenName = ancestorNameOptions.Count > 0 ? ancestorNameOptions[randomAncestor].FirstName : chosenName;
                         finalNameChosen = true;
-                    }
-                    if(!finalNameChosen) {
-                        do
-                        {
-                            index = Utilities.RandomNumber(items.Count);
-                            chosenName = items[index];
-                        } while (family.ChildrensNames().Contains(chosenName) && chosenName != "Unnamed");
                     }
                 }
             }
+            bool nameExists = false;
+            if(person.BirthFamily != null && type == "first") {
+                if(person.BirthFamily.ChildrensNames().Contains(chosenName)) {
+                    nameExists = true;
+                }
+            }
+            if (items.Count > 1) {
+                if(!finalNameChosen || chosenName == ignoredName) {
+                    while (nameExists || chosenName == ignoredName)
+                    {
+                        index = Utilities.RandomNumber(items.Count);
+                        chosenName = items[index];
+                        if(person.BirthFamily != null) {
+                            if(!person.BirthFamily.ChildrensNames().Contains(chosenName)) {
+                                nameExists = false;
+                            }
+                        }
+                    };
+                }
+            }
+
             return chosenName;
         }
 

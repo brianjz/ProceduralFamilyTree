@@ -57,14 +57,10 @@ namespace ProceduralFamilyTree
         {
             Gender = ChooseGender();
             BirthFamily = family;
-            FirstName = Names.RandomName(Gender, "first", family, birthDate);
-            MiddleName = Names.RandomName(Gender, "middle", family, birthDate);
-            if(MiddleName == FirstName) {
-                MiddleName = Names.RandomName(Gender, "middle", family, birthDate);
-            }
-            Suffix = FirstName == family.Husband.FirstName ? "Jr" : "";
             LastName = lastName;
             BirthDate = birthDate;
+            FirstName = GetName("first");
+            MiddleName = MiddleName == "" ? GetName("middle") : MiddleName;
             DeathDate = DetermineDeathDate();
         }
 
@@ -73,7 +69,7 @@ namespace ProceduralFamilyTree
         /// </summary>
         /// <param name="birthDate"></param>
         /// <param name="gender"></param>
-        public Person(DateTime birthDate, char gender, Person? spouse = null)
+        public Person(DateTime birthDate, char gender, Person? spouse = null, string? surname = "")
         {
             if (gender == 'f' || gender == 'm')
             {
@@ -91,14 +87,12 @@ namespace ProceduralFamilyTree
             {
                 throw new ArgumentOutOfRangeException(nameof(gender), "Gender must be M or F or ?, unless spouse is set.");
             }
-            FirstName = Names.RandomName(Gender, "first", Family, birthDate);
-            MiddleName = Names.RandomName(Gender, "middle", Family, birthDate);
-            if(MiddleName == FirstName) {
-                MiddleName = Names.RandomName(Gender, "middle", Family, birthDate);
-            }
-            Suffix = FirstName == Family?.Husband.FirstName ? "Jr" : "";
-            LastName = Names.RandomSurname();
+            LastName = surname == "" ? Names.RandomSurname() : surname!;
             BirthDate = birthDate;
+            FirstName = GetName("first");
+            MiddleName = MiddleName == "" ? GetName("middle") : MiddleName;
+            // FirstName = Names.RandomName(Gender, "first", Family, birthDate);
+            // MiddleName = Names.RandomName(Gender, "middle", Family, birthDate);
             int minAge = 0;
             if (spouse != null)
             {
@@ -112,12 +106,8 @@ namespace ProceduralFamilyTree
             Gender = spouse.Gender == 'm' ? 'f' : 'm';
             LastName = Names.RandomSurname();
             BirthDate = new Utilities.RandomDateTime(spouse.BirthDate.Year, 5).Next();
-            FirstName = Names.RandomName(Gender, "first", null, BirthDate);
-            MiddleName = Names.RandomName(Gender, "middle", null, BirthDate);
-            if(MiddleName == FirstName) {
-                MiddleName = Names.RandomName(Gender, "middle", null, BirthDate);
-            }
-            Suffix = FirstName == Family?.Husband.FirstName ? "Jr" : "";
+            FirstName = GetName("first");
+            MiddleName = MiddleName == "" ? GetName("middle") : MiddleName;
             int minAge = Utilities.RandomNumber(spouse.Age + 5, spouse.Age - 5);
             DeathDate = DetermineDeathDate(minAge);
         }
@@ -144,6 +134,24 @@ namespace ProceduralFamilyTree
                 } while (!isDead && curAge < yearsFromNow);
             }
             return deathDate;
+        }
+
+        public string GetName(string type) {
+            string name = "Unnamed";
+            if(type == "first") {
+                name = Names.RandomName(this, "first");
+                if(name == BirthFamily?.Husband.FirstName) {
+                    Suffix = BirthFamily?.Husband.Suffix == "Jr" ? "III" : "Jr";
+                    MiddleName = BirthFamily?.Husband.MiddleName!;
+                }
+            }
+            else if(type == "middle") {
+                name = Names.RandomName(this, "middle", FirstName);
+                if(name == FirstName) {
+                    MiddleName = Names.RandomName(this, "middle");
+                }
+            }
+            return name;
         }
 
         public bool IsAlive()
