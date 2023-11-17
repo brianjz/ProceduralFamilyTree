@@ -72,7 +72,7 @@ Jill
 Jamie
 Sharon
 Cherie
-Abby
+Abigail
 Kathryn
 Rita
 Cynthia
@@ -101,3 +101,15 @@ Mia
 Yvonne
 Ava
 Kimberly
+Elaine
+Sheila
+Judith
+Ursula
+Barbara
+Lauren
+Michelle
+Bridget
+Andrea
+Bonnie
+Christina
+Joan
