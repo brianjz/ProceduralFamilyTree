@@ -250,8 +250,12 @@ namespace ProceduralFamilyTree
             return lastAncestor;
         }
 
-        public List<Person> FindAncestorsByGender(char gender)
+        public List<Person> FindAncestorsByGender(char gender, int maxDepth = 3)
         {
+            if(maxDepth == 0) {
+                return new List<Person>();
+            }
+
             List<Person> ancestorsWithProperty = new();
 
             if (Gender == gender)
@@ -263,12 +267,12 @@ namespace ProceduralFamilyTree
             {
                 if (BirthFamily?.Husband != null)
                 {
-                    ancestorsWithProperty.AddRange(BirthFamily.Husband.FindAncestorsByGender(gender));
+                    ancestorsWithProperty.AddRange(BirthFamily.Husband.FindAncestorsByGender(gender, maxDepth - 1));
                 }
 
                 if (BirthFamily?.Wife != null)
                 {
-                    ancestorsWithProperty.AddRange(BirthFamily.Wife.FindAncestorsByGender(gender));
+                    ancestorsWithProperty.AddRange(BirthFamily.Wife.FindAncestorsByGender(gender, maxDepth - 1));
                 }
             }
 

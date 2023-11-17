@@ -7,7 +7,6 @@
         public static int MaxNumberOfKids { get; set; } = 10;
         public static int MinMarriageAge { get; set; } = 18;
         public static int MaxAge { get; set; } = 100;
-        // Add more properties as needed
 
         static Utilities()
         {

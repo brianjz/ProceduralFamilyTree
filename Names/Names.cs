@@ -53,8 +53,8 @@
             if (person.Gender == 'm')
             {
                 items = GetMaleNames().ToList(); // need ToList, otherwise it is only a reference and possibly gets cleared
-                if (person.BirthFamily != null && person.BirthFamily.GenderCount(person.Gender) == 0 && type == "first") {
-                    // chance based on a few internet searches on how often first male is named after father
+                if (person.BirthFamily != null && person.BirthFamily.GenderCount(person.Gender) == 0) {
+                    // chance based on a few internet searches on how often first male is named after father, or used as a middle name
                     int chanceNamedJunior = person.BirthDate.Year switch
                     {
                         < 1950 => 52,
@@ -113,6 +113,7 @@
             }
             if (items.Count > 1) {
                 if(!finalNameChosen || chosenName == ignoredName) {
+                    int valve = 0;
                     while (nameExists || chosenName == ignoredName)
                     {
                         index = Utilities.RandomNumber(items.Count);
@@ -120,6 +121,10 @@
                         if(person.BirthFamily != null) {
                             if(!person.BirthFamily.ChildrensNames().Contains(chosenName)) {
                                 nameExists = false;
+                            }
+                            valve++;
+                            if(valve > 50) {
+                                nameExists = false; // safety valve
                             }
                         }
                     };
