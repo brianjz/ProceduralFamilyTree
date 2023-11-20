@@ -167,7 +167,7 @@ namespace ProceduralFamilyTree
         {
             int num = 0;
 
-            List<Person> children = descendant == null ? Children : descendant.Family.Children;
+            List<Person> children = descendant?.Family != null ? descendant.Family.Children : Children;
             foreach (Person child in children)
             {
                 num++; // Increment count for each immediate child

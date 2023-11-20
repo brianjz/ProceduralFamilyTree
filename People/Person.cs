@@ -166,12 +166,13 @@ namespace ProceduralFamilyTree
             return genders[index];
         }
 
-        public string FullName(bool lastNameFirst = false)
+        public string FullName(bool lastNameFirst = false, bool includeMiddle = true)
         {
+            string middle = includeMiddle ? " " + MiddleName + " " : " ";
             if (lastNameFirst)
-                return LastName + ", " + FirstName;
+                return LastName + "," + middle + FirstName + " " + Suffix;
 
-            return FirstName + " " + LastName;
+            return FirstName + middle + LastName + " " + Suffix;
         }
 
         public int GetAge(int year = 0)
@@ -222,7 +223,7 @@ namespace ProceduralFamilyTree
                 var current = queue.Dequeue();
                 yield return current;
 
-                if (current.HasOwnFamily && current.Family.Children.Count > 0)
+                if (current.HasOwnFamily && current.Family != null && current.Family.Children.Count > 0)
                 {
                     foreach (var child in current.Family.Children)
                     {
@@ -282,7 +283,7 @@ namespace ProceduralFamilyTree
         public override string ToString()
         {
             var sb = new StringBuilder();
-            sb.Append("#" + PersonNumber);
+            sb.Append(PersonNumber != "" ? "#" + PersonNumber: "");
             sb.Append(" [" + Gender.ToString().ToUpper() + "] ");
             sb.Append(FullName());
             sb.Append(" (" + BirthDate.ToString("d") + " - ");
