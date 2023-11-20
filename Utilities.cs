@@ -87,21 +87,67 @@
             }
         }
 
-        public static double MortalityRate(int age)
+        public static double MortalityRate(int age, Person person)
         {
+            // Older age-adjusted death rates: https://www.cdc.gov/nchs/data/dvs/hist290_0039.pdf
             // 2019 rates: https://www.cdc.gov/nchs/products/databriefs/db395.htm
-            return age switch
-            {
-                < 4 => 0.023,
-                < 14 => 0.013,
-                < 24 => 0.070,
-                < 34 => 0.129,
-                < 44 => 0.392,
-                < 54 => 0.883,
-                < 64 => 1.765,
-                < 74 => 4.308,
-                _ => 13.229,
+            var curYear = person.BirthDate.Year + age;
+            var rate = curYear switch {
+                <= 1900 =>
+                    age switch
+                    {
+                        < 4 => 1.9838,
+                        < 14 => 0.3859,
+                        < 24 => 0.5855,
+                        < 34 => 0.8198,
+                        < 44 => 1.0231,
+                        < 54 => 1.4954,
+                        < 64 => 2.7236,
+                        < 74 => 5.6361,
+                        _ => 12.33,
+                    },
+                <= 1920 =>
+                    age switch
+                    {
+                        < 4 => 0.9872,
+                        < 14 => 0.2639,
+                        < 24 => 0.4874,
+                        < 34 => 0.6775,
+                        < 44 => 0.8113,
+                        < 54 => 1.2193,
+                        < 64 => 2.3588,
+                        < 74 => 5.2534,
+                        _ => 11.8881,
+                    },
+                < 1940 =>
+                    age switch
+                    {
+                        < 4 => 0.3183,
+                        < 14 => 0.1094,
+                        < 24 => 0.2124,
+                        < 34 => 0.3174,
+                        < 44 => 0.5304,
+                        < 54 => 1.0728,
+                        < 64 => 2.2143,
+                        < 74 => 4.7194,
+                        _ => 11.2537,
+                    },
+                _ => // based on 2019 rates
+                    age switch
+                    {
+                        < 4 => 0.023,
+                        < 14 => 0.013,
+                        < 24 => 0.070,
+                        < 34 => 0.129,
+                        < 44 => 0.392,
+                        < 54 => 0.883,
+                        < 64 => 1.765,
+                        < 74 => 4.308,
+                        _ => 13.229,
+                    },
             };
+
+            return rate;
         }
     }
 }

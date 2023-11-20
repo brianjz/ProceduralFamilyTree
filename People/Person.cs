@@ -125,7 +125,7 @@ namespace ProceduralFamilyTree
                 int yearsFromNow = DateTime.Now.Year - BirthDate.Year - 1;
                 do {
                     var chance = Utilities.RandomDecimalNumber(100, 0);
-                    var dChance = Utilities.MortalityRate(curAge);
+                    double dChance = Utilities.MortalityRate(curAge, this);
                     if(chance <= dChance || curAge == Utilities.MaxAge) {
                         deathDate = new Utilities.RandomDateTime(BirthDate.AddYears(curAge).Year).Next();
                         isDead = true;
