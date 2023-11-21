@@ -148,8 +148,10 @@ namespace ProceduralFamilyTree
 
         public void CreateChildren(int maxNumChildren = 0)
         {
+            int year = MarriageDate.Year;
             maxNumChildren = maxNumChildren == 0 ? Utilities.MaxNumberOfKids : maxNumChildren;
-            int familyChildren = Utilities.WeightedRandomNumber(0.6, 0.2, maxNumChildren, 0);
+            double meanChance = Utilities.ChildAmountMean(year);
+            int familyChildren = Utilities.WeightedRandomNumber(meanChance, 0.2, maxNumChildren, 0);
             for (var i = 0; i < familyChildren; i++)
             {
                 CreateChild();
@@ -273,6 +275,8 @@ namespace ProceduralFamilyTree
 
             if (person.Family != null && person.HasOwnFamily)
             {
+                var spouse = person.Gender == 'm' ? person.Family.Wife : person.Family.Husband;
+                spouse.PersonNumber = person.PersonNumber + "B";
                 for (int i = 0; i < person.Family.Children.Count; i++)
                 {
                     AssignPersonNumbers(person.Family.Children[i], person.PersonNumber + "." + (i + 1).ToString());

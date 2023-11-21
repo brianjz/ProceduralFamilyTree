@@ -87,6 +87,17 @@
             }
         }
 
+        public static double ChildAmountMean(int year) {
+            double num = year switch {
+                >= 1972 => 0.2,
+                >= 1964 => 0.3,
+                >= 1950 => 0.4,
+                _ => 0.6
+            };
+
+            return num;
+        }
+
         public static double MortalityRate(int age, Person person)
         {
             // Older age-adjusted death rates: https://www.cdc.gov/nchs/data/dvs/hist290_0039.pdf
@@ -105,6 +116,19 @@
                         < 64 => 2.7236,
                         < 74 => 5.6361,
                         _ => 12.33,
+                    },
+                int y when y <= 1919 && y >= 1917 => // WWI
+                    age switch
+                    {
+                        < 4 => 0.9872,
+                        < 14 => 0.2639,
+                        < 24 => 1.0706,
+                        < 34 => 1.6435,
+                        < 44 => 0.8113,
+                        < 54 => 1.2193,
+                        < 64 => 2.3588,
+                        < 74 => 5.2534,
+                        _ => 11.8881,
                     },
                 <= 1920 =>
                     age switch

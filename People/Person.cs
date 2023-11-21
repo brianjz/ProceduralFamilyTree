@@ -113,12 +113,12 @@ namespace ProceduralFamilyTree
 
         public DateTime DetermineDeathDate(int minAge = 0) {
             DateTime deathDate = DateTime.MinValue;
-            if (DateTime.Now.Subtract(BirthDate).TotalDays / 365 > Utilities.MaxAge)
-            {
-                deathDate = new Utilities.RandomDateTime(BirthDate.AddYears(Utilities.WeightedRandomNumber(0.8, 0.2, Utilities.MaxAge, minAge)).Year).Next();
-            }
-            else
-            {
+            // if (DateTime.Now.Subtract(BirthDate).TotalDays / 365 > Utilities.MaxAge)
+            // {
+            //     deathDate = new Utilities.RandomDateTime(BirthDate.AddYears(Utilities.WeightedRandomNumber(0.8, 0.2, Utilities.MaxAge, minAge)).Year).Next();
+            // }
+            // else
+            // {
                 bool isDead = false;
                 int curAge = minAge;
                 int yearsFromNow = DateTime.Now.Year - BirthDate.Year - 1;
@@ -130,8 +130,8 @@ namespace ProceduralFamilyTree
                         isDead = true;
                     }
                     curAge++;
-                } while (!isDead && curAge < yearsFromNow);
-            }
+                } while (!isDead && curAge < yearsFromNow && curAge < Utilities.MaxAge);
+            // }
             return deathDate;
         }
 
