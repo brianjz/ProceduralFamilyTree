@@ -1,4 +1,5 @@
-﻿using System.Text;
+﻿using System;
+using System.Text;
 
 namespace ProceduralFamilyTree
 {
@@ -45,7 +46,7 @@ namespace ProceduralFamilyTree
             Person husband = new(new Utilities.RandomDateTime(year).Next(), 'm', null, surname);
             Person wife = new(new Utilities.RandomDateTime(husband.BirthDate.Year, 5).Next(), 'f', husband);
 
-            Family? family = CreateFamily(husband, wife);
+            Family? family = CreateEmptyFamily(husband, wife);
             if(family != null) {
                 family.Husband.PersonNumber = "1";
                 family.CreateChildren();
@@ -55,7 +56,7 @@ namespace ProceduralFamilyTree
             return family;
         }
 
-        public static Family? CreateFamily(Person spouse1, Person spouse2, DateTime? marriageDate = null)
+        public static Family? CreateEmptyFamily(Person spouse1, Person spouse2, DateTime? marriageDate = null)
         {
 
             if (spouse1.Gender == spouse2.Gender) // Same genders cannot marry at this point, plan to implement
@@ -100,19 +101,16 @@ namespace ProceduralFamilyTree
         {
             if (generations > 0)
             {
-                for (int i = 0; i < generations; i++)
+                foreach (Person child in Children)
                 {
-                    foreach (Person child in Children)
+                    if (child.Age > Utilities.MinMarriageAge && child.GetAge(DateTime.Now.Year) > Utilities.MinMarriageAge)
                     {
-                        if (child.Age > Utilities.MinMarriageAge && child.GetAge(DateTime.Now.Year) > Utilities.MinMarriageAge)
+                        Person spouse = new(child);
+                        child.Family = CreateEmptyFamily(child, spouse);
+                        if (child.Family != null)
                         {
-                            Person spouse = new(child);
-                            child.Family = CreateFamily(child, spouse);
-                            if (child.Family != null)
-                            {
-                                child.Family.CreateChildren();
-                                child.Family.CreateGenerations(generations - 1);
-                            }
+                            child.Family.CreateChildren();
+                            child.Family.CreateGenerations(generations - 1);
                         }
                     }
                 }
@@ -151,7 +149,8 @@ namespace ProceduralFamilyTree
         public void CreateChildren(int maxNumChildren = 0)
         {
             maxNumChildren = maxNumChildren == 0 ? Utilities.MaxNumberOfKids : maxNumChildren;
-            for (var i = 0; i < Utilities.WeightedRandomNumber(0.6, 0.2, maxNumChildren, 0); i++)
+            int familyChildren = Utilities.WeightedRandomNumber(0.6, 0.2, maxNumChildren, 0);
+            for (var i = 0; i < familyChildren; i++)
             {
                 CreateChild();
             }

@@ -27,7 +27,6 @@ namespace ProceduralFamilyTree
         public string PersonNumber { get => personNumber; set => personNumber = value; }
         public bool HasOwnFamily => Family != null;
         public int Age { get => GetAge(); }
-        private List<Person> MaleAncestors { get => FindAncestorsByGender('m'); }
 
         /// <summary>
         /// Constructor to use to initiate all major attributes of a Person
@@ -142,6 +141,9 @@ namespace ProceduralFamilyTree
                 name = Names.RandomName(this, "first");
                 if(name == BirthFamily?.Husband.FirstName) {
                     Suffix = BirthFamily?.Husband.Suffix == "Jr" ? "III" : "Jr";
+                    if(Suffix == "Jr") {
+                        BirthFamily!.Husband.Suffix = BirthFamily.Husband.Suffix == "" ? "Sr" : BirthFamily.Husband.Suffix;
+                    }
                     MiddleName = BirthFamily?.Husband.MiddleName!;
                 }
             }
@@ -278,6 +280,15 @@ namespace ProceduralFamilyTree
             }
 
             return ancestorsWithProperty;
+        }
+
+        public string GetMaleAncestry() {
+            string ma = FirstName + " " + MiddleName;
+            if(BirthFamily != null) {
+                ma += " => " + BirthFamily.Husband.GetMaleAncestry();
+            }
+
+            return ma;
         }
 
         public override string ToString()

@@ -101,6 +101,10 @@
                         }
                         var randomAncestor = Utilities.RandomNumber(ancestorNameOptions.Count);
                         chosenName = ancestorNameOptions.Count > 0 ? ancestorNameOptions[randomAncestor].FirstName : chosenName;
+                        if(person.BirthFamily.ChildrensNames().Contains(chosenName)) { // handles edge cases
+                            randomAncestor = Utilities.RandomNumber(ancestorNameOptions.Count);
+                            chosenName = ancestorNameOptions.Count > 0 ? ancestorNameOptions[randomAncestor].FirstName : chosenName;
+                        }
                         finalNameChosen = true;
                     }
                 }
