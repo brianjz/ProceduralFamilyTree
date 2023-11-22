@@ -53,23 +53,46 @@
             if (person.Gender == 'm')
             {
                 items = GetMaleNames().ToList(); // need ToList, otherwise it is only a reference and possibly gets cleared
-                if (person.BirthFamily != null && person.BirthFamily.GenderCount(person.Gender) == 0) {
-                    // chance based on a few internet searches on how often first male is named after father, or used as a middle name
-                    int chanceNamedJunior = person.BirthDate.Year switch
+                if (person.BirthFamily != null) {
+                    if (type == "middle") {
+                        if (Utilities.RandomNumber(100, 0) <= 30) {
+                            items.Clear();
+                            if (Utilities.RandomNumber(100, 0) <= 50) {
+                                items.Add(person.BirthFamily.Husband.FirstName);
+                            } else {
+                                items.Add(person.BirthFamily.Husband.MiddleName);
+                            }
+                        }
+                    }
+                    else if(person.BirthFamily.GenderCount(person.Gender) == 0)
                     {
-                        < 1950 => 52,
-                        < 2000 => 28,
-                        _ => 2
-                    };
-                    if (Utilities.RandomNumber(100, 0) <= chanceNamedJunior && !person.BirthFamily.ChildrensNames().Contains(person.BirthFamily.Husband.FirstName)) {
-                        items.Clear();
-                        items.Add(person.BirthFamily.Husband.FirstName);
+                        // chance based on a few internet searches on how often first male child is named after father
+                        int chanceNamedJunior = person.BirthDate.Year switch
+                        {
+                            < 1950 => 52,
+                            < 2000 => 28,
+                            _ => 2
+                        };
+                        if (Utilities.RandomNumber(100, 0) <= chanceNamedJunior && !person.BirthFamily.ChildrensNames().Contains(person.BirthFamily.Husband.FirstName)) {
+                            items.Clear();
+                            items.Add(person.BirthFamily.Husband.FirstName);
+                        }
                     }
                 }
             }
             else
             {
                 items = GetFemaleNames().ToList();
+                if (type == "middle" && person.BirthFamily != null) {
+                    if (Utilities.RandomNumber(100, 0) <= 30) {
+                        items.Clear();
+                        if (Utilities.RandomNumber(100, 0) <= 50) {
+                            items.Add(person.BirthFamily.Wife.FirstName);
+                        } else {
+                            items.Add(person.BirthFamily.Wife.MiddleName);
+                        }
+                    }
+                }
             }
 
             int index = Utilities.RandomNumber(items.Count);
