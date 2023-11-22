@@ -25,7 +25,7 @@ namespace ProceduralFamilyTree
         public Family? Family { get => marriedFamily; set => marriedFamily = value; }
         public Family? BirthFamily { get => birthFamily; set => birthFamily = value; }
         public string PersonNumber { get => personNumber; set => personNumber = value; }
-        public bool HasOwnFamily => Family != null;
+        public bool HasOwnFamily => marriedFamily != null;
         public int Age { get => GetAge(); }
 
         /// <summary>
@@ -41,10 +41,11 @@ namespace ProceduralFamilyTree
             LastName = lastName;
             BirthDate = birthDate;
             Gender = gender;
-            if (DateTime.Now.Subtract(BirthDate).TotalDays / 365 > Utilities.MaxAge)
-            {
-                DeathDate = new Utilities.RandomDateTime(BirthDate.AddYears(Utilities.RandomNumber(Utilities.MaxAge, 0)).Year).Next();
-            }
+            // if (DateTime.Now.Subtract(BirthDate).TotalDays / 365 > Utilities.MaxAge)
+            // {
+            //     DeathDate = new Utilities.RandomDateTime(BirthDate.AddYears(Utilities.RandomNumber(Utilities.MaxAge, 0)).Year).Next();
+            // }
+            DeathDate = DetermineDeathDate();
         }
         /// <summary>
         /// Constructor to use to initiate all major attributes of a Person with random first name and gender
@@ -113,25 +114,19 @@ namespace ProceduralFamilyTree
 
         public DateTime DetermineDeathDate(int minAge = 0) {
             DateTime deathDate = DateTime.MinValue;
-            // if (DateTime.Now.Subtract(BirthDate).TotalDays / 365 > Utilities.MaxAge)
-            // {
-            //     deathDate = new Utilities.RandomDateTime(BirthDate.AddYears(Utilities.WeightedRandomNumber(0.8, 0.2, Utilities.MaxAge, minAge)).Year).Next();
-            // }
-            // else
-            // {
-                bool isDead = false;
-                int curAge = minAge;
-                int yearsFromNow = DateTime.Now.Year - BirthDate.Year - 1;
-                do {
-                    var chance = Utilities.RandomDecimalNumber(100, 0);
-                    double dChance = Utilities.MortalityRate(curAge, this);
-                    if(chance <= dChance || curAge == Utilities.MaxAge) {
-                        deathDate = new Utilities.RandomDateTime(BirthDate.AddYears(curAge).Year).Next();
-                        isDead = true;
-                    }
-                    curAge++;
-                } while (!isDead && curAge < yearsFromNow && curAge < Utilities.MaxAge);
-            // }
+            bool isDead = false;
+            int curAge = minAge;
+            int yearsFromNow = DateTime.Now.Year - BirthDate.Year - 1;
+            do {
+                var chance = Utilities.RandomDecimalNumber(100, 0);
+                double dChance = Utilities.MortalityRate(curAge, this);
+                if(chance <= dChance || curAge == Utilities.MaxAge) {
+                    int curYear = BirthDate.AddYears(curAge).Year;
+                    deathDate = new Utilities.RandomDateTime(curYear, 5).Next();
+                    isDead = true;
+                }
+                curAge++;
+            } while (!isDead && curAge < yearsFromNow && curAge <= Utilities.MaxAge);
             return deathDate;
         }
 

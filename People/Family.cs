@@ -51,6 +51,9 @@ namespace ProceduralFamilyTree
                 family.Husband.PersonNumber = "1";
                 family.CreateChildren();
                 family.AssignPersonNumbers(family.Husband);
+            } else {
+                // in cases of the main family being null, try again (possible, but unlikely, recursive loop)
+                family = CreateNewRandomFamily(year, surname);
             }
 
             return family;
@@ -99,7 +102,8 @@ namespace ProceduralFamilyTree
 
         public void CreateGenerations(int generations = 0)
         {
-            if (generations > 0)
+            generations--;
+            if (generations >= 0)
             {
                 foreach (Person child in Children)
                 {
@@ -116,7 +120,6 @@ namespace ProceduralFamilyTree
                 }
             }
         }
-
 
         public void AddChild(Person child)
         {
@@ -164,17 +167,24 @@ namespace ProceduralFamilyTree
             return Children.Count(child => child.Age >= Utilities.MinMarriageAge);
         }
 
-        public int NumberOfDescendants(Person? descendant = null)
+        public int NumberOfDescendants(Person? descendant = null, bool countAll = false)
         {
             int num = 0;
+            if(countAll && descendant?.BirthFamily == null) { // in case of root person
+                num++;
+            }
 
             List<Person> children = descendant?.Family != null ? descendant.Family.Children : Children;
+            if(countAll && descendant?.Family != null) { // spouse
+                num++;
+            }
             foreach (Person child in children)
             {
                 num++; // Increment count for each immediate child
                 if (child.HasOwnFamily)
                 {
-                    num += NumberOfDescendants(child); // Recursively count descendants of each child
+                    if(countAll) num++; // spouse
+                    num += NumberOfDescendants(child, countAll); // Recursively count descendants of each child
                 }
             }
 
