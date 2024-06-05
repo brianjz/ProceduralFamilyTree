@@ -14,7 +14,7 @@
             if (!maleNamesLoaded)
             {
                 maleNamesLoaded = true;
-                MaleNames = Properties.Resources.MaleNames.Split("\r\n").ToList();
+                MaleNames = Properties.Resources.MaleNames.Split(Environment.NewLine).ToList();
             }
             return MaleNames;
         }
@@ -23,7 +23,7 @@
             if (!femaleNamesLoaded)
             {
                 femaleNamesLoaded = true;
-                FemaleNames = Properties.Resources.FemaleNames.Split("\r\n").ToList();
+                FemaleNames = Properties.Resources.FemaleNames.Split(Environment.NewLine).ToList();
             }
             return FemaleNames;
         }
@@ -32,7 +32,7 @@
             if (!suramesLoaded)
             {
                 suramesLoaded = true;
-                Surnames = Properties.Resources.Surnames.Split("\r\n").ToList();
+                Surnames = Properties.Resources.Surnames.Split(Environment.NewLine).ToList();
             }
             return Surnames;
         }
